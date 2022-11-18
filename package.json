@@ -1,0 +1,71 @@
+{
+  "name": "template",
+  "version": "0.0.0",
+  "private": "true",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "preview": "vite preview",
+    "commit": "git-cz",
+    "prepare": "husky install",
+    "lint": "npm run lint:script && npm run lint:style",
+    "lint:script": "eslint --ext .js,.jsx,.ts,.tsx --fix --quiet ./",
+    "lint:style": "stylelint --fix \"src/**/*.{css,scss}\""
+  },
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-conventional-changelog"
+    }
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
+  },
+  "husky": {
+    "hooks": {
+      "prepare-commit-msg": "exec < /dev/tty && git cz --hook || true"
+    }
+  },
+  "dependencies": {
+    "axios": "^0.27.2",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-router-dom": "^6.3.0",
+    "rollup": "^3.3.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.0.3",
+    "@commitlint/config-conventional": "^17.0.3",
+    "@types/node": "^18.0.6",
+    "@types/react": "^18.0.5",
+    "@types/react-dom": "^18.0.1",
+    "@typescript-eslint/eslint-plugin": "5.30.7",
+    "@typescript-eslint/parser": "5.30.7",
+    "@vitejs/plugin-legacy": "^2.0.0",
+    "@vitejs/plugin-react": "^2.0.0",
+    "autoprefixer": "^10.4.7",
+    "commitizen": "^4.2.5",
+    "commitlint": "^17.0.3",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "8.20.0",
+    "eslint-config-prettier": "8.5.0",
+    "eslint-plugin-prettier": "4.2.1",
+    "eslint-plugin-react": "7.30.1",
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.3",
+    "postcss": "^8.4.14",
+    "prettier": "2.7.1",
+    "stylelint": "^14.9.1",
+    "stylelint-config-prettier": "^9.0.3",
+    "stylelint-config-recess-order": "^3.0.0",
+    "stylelint-config-standard": "^26.0.0",
+    "stylelint-prettier": "^2.0.0",
+    "tailwindcss": "^3.1.6",
+    "terser": "^5.14.2",
+    "typescript": "4.7.4",
+    "vite": "^3.0.2",
+    "vite-plugin-eslint": "^1.7.0",
+    "vite-plugin-mkcert": "1.9.0",
+    "vite-plugin-stylelint": "^3.0.8",
+    "vite-tsconfig-paths": "3.5.0"
+  }
+}
