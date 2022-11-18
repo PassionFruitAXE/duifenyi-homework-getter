@@ -21,6 +21,9 @@ class HomeworkController {
       }).then(response => response.headers["set-cookie"]?.join(";") || "");
       // 所有作业信息
       const { data: CourseInfo } = await getStudentCourse(cookie);
+      if (!Array.isArray(CourseInfo)) {
+        throw new Error("可能是账号密码不正确");
+      }
       // 获取未完成作业信息
       const data = await Promise.all(
         CourseInfo.map(item =>
@@ -54,7 +57,10 @@ class HomeworkController {
       });
     } catch (error) {
       console.log(error);
-      ctx.body = baseResponse({ data: null, msg: "数据获取失败" });
+      ctx.body = baseResponse({
+        data: null,
+        msg: `数据获取失败${error}}`,
+      });
     }
   }
 }

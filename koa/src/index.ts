@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import cors from "@koa/cors";
 import error from "koa-json-error";
 import Koa from "koa";
 import routers from "./routes";
@@ -13,6 +14,7 @@ const options = {
     process.env.NODE_ENV === "production" ? rest : { stack, ...rest },
 };
 
+app.use(cors());
 app.use(error(options));
 app.use(
   views("src/templates", {
