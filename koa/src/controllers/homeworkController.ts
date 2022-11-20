@@ -56,10 +56,10 @@ class HomeworkController {
         ),
       });
     } catch (error) {
-      console.log(error);
       ctx.body = baseResponse({
+        code: 401,
         data: null,
-        msg: `数据获取失败${error}}`,
+        msg: `数据获取失败${error}`,
       });
     }
   }

@@ -77,7 +77,7 @@ const HomePage: FC = () => {
     setIsLoading(true);
     getHomeworkList({ loginname, password })
       .then(response => {
-        setHomeworkData(response.data.data);
+        setHomeworkData(response.data.data || []);
       })
       .finally(() => {
         setIsLoading(false);
