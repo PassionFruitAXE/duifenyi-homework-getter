@@ -1,5 +1,4 @@
 import _ from "lodash";
-import dayjs from "../vendor/dayjs";
 import Koa from "koa";
 import { baseResponse } from "../utils/response";
 import { getHomeworkList } from "../services/homeworkService";
@@ -41,25 +40,19 @@ class HomeworkController {
                 CourseName: item.CourseName,
                 // 作业信息
                 ..._.pick(res, ["HWName", "EndDate", "IsSubmit", "OverDue"]),
-                // 剩余时间
-                CountTime: dayjs(res.EndDate, "YYYY-MM-DD HH:mm:ss").fromNow(),
               })),
           ),
         ),
       );
       ctx.body = baseResponse({
-        // 数组扁平化，按剩余时间排序
-        data: _.flattenDeep(data).sort(
-          (a, b) =>
-            dayjs(a.EndDate, "YYYY-MM-DD HH:mm:ss").unix() -
-            dayjs(b.EndDate, "YYYY-MM-DD HH:mm:ss").unix(),
-        ),
+        // 数组扁平化
+        data: _.flattenDeep(data),
       });
     } catch (error) {
       ctx.body = baseResponse({
         code: 401,
         data: null,
-        msg: `数据获取失败${error}`,
+        msg: `数据获取失败 ${error}`,
       });
     }
   }

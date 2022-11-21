@@ -5,7 +5,6 @@ export type TBaseResponse<T> = {
 };
 
 export type TGetHomeworkList = {
-  CountTime: string;
   CourseName: string;
   EndDate: string;
   HWName: string;

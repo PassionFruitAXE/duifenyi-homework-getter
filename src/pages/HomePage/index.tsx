@@ -1,4 +1,5 @@
 import _ from "lodash";
+import dayjs from "@/vendor/dayjs";
 import { FC, useMemo, useRef, useState } from "react";
 import { getHomeworkList } from "@/api";
 import { Table, Tag } from "antd";
@@ -6,14 +7,23 @@ import { TGetHomeworkList } from "@/types/response";
 import type { ColumnsType } from "antd/es/table";
 
 interface DataType {
+  key: string;
+  status: string;
+}
+
+interface ExpandedDataType {
   HWName: string;
   CourseName: string;
   EndDate: string;
-  CountTime: string;
   tags: string[];
+  CountTime: string;
 }
 
 const columns: ColumnsType<DataType> = [
+  { title: "完成状态", dataIndex: "status", key: "status" },
+];
+
+const expandedColumns: ColumnsType<ExpandedDataType> = [
   {
     title: "作业",
     dataIndex: "HWName",
@@ -65,11 +75,65 @@ const columns: ColumnsType<DataType> = [
   },
 ];
 
+enum Status {
+  NOT_OVER_DUE = "1",
+  OVER_DUE = "2",
+}
+
+const data: DataType[] = [
+  { status: "未逾期", key: Status.NOT_OVER_DUE },
+  { status: "已逾期", key: Status.OVER_DUE },
+];
+
 const HomePage: FC = () => {
   const [homeworkData, setHomeworkData] = useState<TGetHomeworkList>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const usernameRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
+  console.log(dayjs("2022/9/21 19:21:59", "YYYY/M/D H:m:s").isValid());
+
+  // 未逾期作业
+  const notOverdueData = useMemo<ExpandedDataType[]>(
+    () =>
+      homeworkData
+        .filter(item =>
+          // 截止日期在系统时间前
+          dayjs(new Date()).isBefore(dayjs(item.EndDate, "YYYY/M/D H:m:s"))
+        )
+        .sort(
+          (a, b) =>
+            dayjs(a.EndDate, "YYYY/M/D H:m:s").unix() -
+            dayjs(b.EndDate, "YYYY/M/D H:m:s").unix()
+        )
+        .map(item => ({
+          ..._.pick(item, ["HWName", "CourseName", "EndDate"]),
+          tags: [item.OverDue],
+          CountTime: dayjs(item.EndDate, "YYYY/M/D H:m:s").fromNow(),
+        })) || [],
+    [homeworkData]
+  );
+  // 已逾期作业
+  const overdueData = useMemo<ExpandedDataType[]>(
+    () =>
+      homeworkData
+        .filter(item => {
+          // 截止日期在系统时间前
+          return dayjs(new Date()).isAfter(
+            dayjs(item.EndDate, "YYYY/M/D H:m:s")
+          );
+        })
+        .sort(
+          (a, b) =>
+            dayjs(a.EndDate, "YYYY/M/D H:m:s").unix() -
+            dayjs(b.EndDate, "YYYY/M/D H:m:s").unix()
+        )
+        .map(item => ({
+          ..._.pick(item, ["HWName", "CourseName", "EndDate"]),
+          tags: [item.OverDue],
+          CountTime: dayjs(item.EndDate, "YYYY/M/D H:m:s").fromNow(),
+        })) || [],
+    [homeworkData]
+  );
 
   const login = () => {
     const loginname = usernameRef.current?.value || "";
@@ -84,21 +148,21 @@ const HomePage: FC = () => {
       });
   };
 
-  const data = useMemo<DataType[]>(
-    () =>
-      homeworkData.map(item => ({
-        ..._.pick(item, ["HWName", "CourseName", "EndDate", "CountTime"]),
-        tags: [item.OverDue],
-      })) || [],
-    [homeworkData]
-  );
+  const expandedRowRender = (record: DataType) => {
+    const data: ExpandedDataType[] =
+      record.key === Status.NOT_OVER_DUE ? notOverdueData : overdueData;
+    return (
+      <Table
+        columns={expandedColumns}
+        dataSource={data}
+        pagination={{ pageSize: 6 }}
+      />
+    );
+  };
 
   return (
-    <div
-      className="flex justify-center content-center p-8"
-      style={{ height: 765 }}
-    >
-      <div className="flex items-center w-full max-w-md px-6 mx-auto lg:w-2/6">
+    <div className="flex justify-center content-center p-8 h-screen">
+      <div className="flex items-center w-full max-w-md px-6 mx-auto lg:w-2/6 overflow-auto">
         <div className="flex-1">
           <div className="text-center">
             <h2 className="text-4xl font-bold text-center text-gray-700 dark:text-white">
@@ -172,14 +236,19 @@ const HomePage: FC = () => {
           </div>
         </div>
       </div>
-      <Table
-        loading={isLoading}
-        columns={columns}
-        dataSource={data}
-        pagination={{ position: ["topLeft"] }}
-        rowKey={item => item.HWName}
-        className="shadow-md w-3/4"
-      />
+      <div className="flex flex-col w-3/4 overflow-auto">
+        <Table
+          loading={isLoading}
+          columns={columns}
+          dataSource={data}
+          expandable={{
+            expandedRowRender: expandedRowRender,
+            defaultExpandedRowKeys: [Status.NOT_OVER_DUE],
+          }}
+          pagination={false}
+          className="shadow-md"
+        />
+      </div>
     </div>
   );
 };
