@@ -27,9 +27,10 @@ export type THomework = {
   EndDate: string;
   PostTime: string;
   UpdateTime: string;
+  // 0: 允许逾期提交 1: 不允许逾期提交
   IsTimer: string;
   HWCycleID: string;
-  // 0: 允许预期提交 1: 不允许预期提交
+  // 0: 允许逾期修改 1: 不允许逾期修改
   OverDue: string;
   CommentType: string;
   Status: string;

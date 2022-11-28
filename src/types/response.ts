@@ -10,4 +10,5 @@ export type TGetHomeworkList = {
   HWName: string;
   IsSubmit: string;
   OverDue: string;
+  IsTimer: string;
 }[];

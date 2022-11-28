@@ -15,7 +15,10 @@ interface ExpandedDataType {
   HWName: string;
   CourseName: string;
   EndDate: string;
-  tags: string[];
+  tags: {
+    OverDue: string;
+    IsTimer: string;
+  };
   CountTime: string;
 }
 
@@ -43,28 +46,11 @@ const expandedColumns: ColumnsType<ExpandedDataType> = [
     title: "Tags",
     key: "tags",
     dataIndex: "tags",
-    render: (_: unknown, { tags }: { tags: string[] }) => (
+    render: (_: unknown, { tags }) => (
       <>
-        {tags.map(tag => {
-          enum Color {
-            GEEK_BLUE = "geekblue",
-            GREEN = "green",
-            VOLCANO = "volcano",
-          }
-          let color = Color.GEEK_BLUE;
-          if (tag === "1") {
-            color = Color.GREEN;
-            tag = "可逾期提交";
-          } else {
-            color = Color.VOLCANO;
-            tag = "不可逾期提交";
-          }
-          return (
-            <Tag color={color} key={tag}>
-              {tag}
-            </Tag>
-          );
-        })}
+        {Object.entries(tags).map(([key, value]) =>
+          tagRender[key] ? tagRender[key](value) : <></>
+        )}
       </>
     ),
   },
@@ -85,12 +71,50 @@ const data: DataType[] = [
   { status: "已逾期", key: Status.OVER_DUE },
 ];
 
+enum Color {
+  GEEK_BLUE = "geekblue",
+  GREEN = "green",
+  VOLCANO = "volcano",
+}
+
+const tagRender: {
+  [key: string]: (value: string) => JSX.Element;
+} = {
+  /**
+   * 是否可以逾期修改
+   * @param value 0: 允许 1：不允许
+   * @returns
+   */
+  OverDue: value => {
+    const color = value === "0" ? Color.GREEN : Color.VOLCANO;
+    value = value === "0" ? "允许逾期修改" : "不允许逾期修改";
+    return (
+      <Tag color={color} key={value}>
+        {value}
+      </Tag>
+    );
+  },
+  /**
+   * 是否可以逾期提交
+   * @param value 0: 允许 1：不允许
+   * @returns
+   */
+  IsTimer: value => {
+    const color = value === "0" ? Color.GREEN : Color.VOLCANO;
+    value = value === "0" ? "允许逾期提交" : "不允许逾期提交";
+    return (
+      <Tag color={color} key={value}>
+        {value}
+      </Tag>
+    );
+  },
+};
+
 const HomePage: FC = () => {
   const [homeworkData, setHomeworkData] = useState<TGetHomeworkList>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const usernameRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
-  console.log(dayjs("2022/9/21 19:21:59", "YYYY/M/D H:m:s").isValid());
 
   // 未逾期作业
   const notOverdueData = useMemo<ExpandedDataType[]>(
@@ -107,7 +131,7 @@ const HomePage: FC = () => {
         )
         .map(item => ({
           ..._.pick(item, ["HWName", "CourseName", "EndDate"]),
-          tags: [item.OverDue],
+          tags: { OverDue: item.OverDue, IsTimer: item.IsTimer },
           CountTime: dayjs(item.EndDate, "YYYY/M/D H:m:s").fromNow(),
         })) || [],
     [homeworkData]
@@ -129,7 +153,7 @@ const HomePage: FC = () => {
         )
         .map(item => ({
           ..._.pick(item, ["HWName", "CourseName", "EndDate"]),
-          tags: [item.OverDue],
+          tags: { OverDue: item.OverDue, IsTimer: item.IsTimer },
           CountTime: dayjs(item.EndDate, "YYYY/M/D H:m:s").fromNow(),
         })) || [],
     [homeworkData]
@@ -170,7 +194,7 @@ const HomePage: FC = () => {
             </h2>
 
             <p className="mt-3 text-gray-500 dark:text-gray-300">
-              登录您的对分易账号已获取未完成作业信息
+              请将已经结课的课程进行归档 避免获取结课课程的作业
             </p>
           </div>
 
