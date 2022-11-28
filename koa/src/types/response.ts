@@ -21,17 +21,15 @@ export type THomework = {
   HWID: string;
   HWName: string;
   Depressions: string;
-  HWTypeID: string;
+  HWTypeID: string; // x：个人作业 2: 小组作业
   SGID: string;
   CorrectTypeID: string;
   EndDate: string;
   PostTime: string;
   UpdateTime: string;
-  // 0: 允许逾期提交 1: 不允许逾期提交
   IsTimer: string;
   HWCycleID: string;
-  // 0: 允许逾期修改 1: 不允许逾期修改
-  OverDue: string;
+  OverDue: string; // 0: 允许逾期提交 1: 不允许逾期提交
   CommentType: string;
   Status: string;
   IsSend: string;

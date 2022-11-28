@@ -39,13 +39,7 @@ class HomeworkController {
                 // 课程名
                 CourseName: item.CourseName,
                 // 作业信息
-                ..._.pick(res, [
-                  "HWName",
-                  "EndDate",
-                  "IsSubmit",
-                  "OverDue",
-                  "IsTimer",
-                ]),
+                ..._.pick(res, ["HWName", "EndDate", "IsSubmit", "OverDue"]),
               })),
           ),
         ),

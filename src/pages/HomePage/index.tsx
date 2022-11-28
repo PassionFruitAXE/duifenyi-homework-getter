@@ -17,7 +17,6 @@ interface ExpandedDataType {
   EndDate: string;
   tags: {
     OverDue: string;
-    IsTimer: string;
   };
   CountTime: string;
 }
@@ -81,25 +80,11 @@ const tagRender: {
   [key: string]: (value: string) => JSX.Element;
 } = {
   /**
-   * 是否可以逾期修改
-   * @param value 0: 允许 1：不允许
-   * @returns
-   */
-  OverDue: value => {
-    const color = value === "0" ? Color.GREEN : Color.VOLCANO;
-    value = value === "0" ? "允许逾期修改" : "不允许逾期修改";
-    return (
-      <Tag color={color} key={value}>
-        {value}
-      </Tag>
-    );
-  },
-  /**
    * 是否可以逾期提交
    * @param value 0: 允许 1：不允许
    * @returns
    */
-  IsTimer: value => {
+  OverDue: value => {
     const color = value === "0" ? Color.GREEN : Color.VOLCANO;
     value = value === "0" ? "允许逾期提交" : "不允许逾期提交";
     return (
@@ -131,7 +116,7 @@ const HomePage: FC = () => {
         )
         .map(item => ({
           ..._.pick(item, ["HWName", "CourseName", "EndDate"]),
-          tags: { OverDue: item.OverDue, IsTimer: item.IsTimer },
+          tags: { OverDue: item.OverDue },
           CountTime: dayjs(item.EndDate, "YYYY/M/D H:m:s").fromNow(),
         })) || [],
     [homeworkData]
@@ -153,7 +138,7 @@ const HomePage: FC = () => {
         )
         .map(item => ({
           ..._.pick(item, ["HWName", "CourseName", "EndDate"]),
-          tags: { OverDue: item.OverDue, IsTimer: item.IsTimer },
+          tags: { OverDue: item.OverDue },
           CountTime: dayjs(item.EndDate, "YYYY/M/D H:m:s").fromNow(),
         })) || [],
     [homeworkData]
@@ -213,6 +198,11 @@ const HomePage: FC = () => {
                 ref={usernameRef}
                 placeholder="对分易账号"
                 className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-md dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
+                onKeyUp={e => {
+                  if (e.key === "Enter") {
+                    login();
+                  }
+                }}
               />
             </div>
 
@@ -233,6 +223,11 @@ const HomePage: FC = () => {
                 ref={passwordRef}
                 placeholder="对分易密码"
                 className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-md dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
+                onKeyUp={e => {
+                  if (e.key === "Enter") {
+                    login();
+                  }
+                }}
               />
             </div>
 
