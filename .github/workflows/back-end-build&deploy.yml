@@ -19,11 +19,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16 # node版本
-      - name: npm install
-        run: npm install
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 7.16.1
+      - name: pnpm install
+        run: pnpm install
         working-directory: ./koa
-      - name: npm run build
-        run: npm run build
+      - name: pnpm run build
+        run: pnpm run build
         working-directory: ./koa
       # 命名这个任务为发布Deploy
       - name: Deploy
