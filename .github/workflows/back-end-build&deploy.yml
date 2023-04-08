@@ -1,4 +1,4 @@
-name: Build Back-end app and deploy to Tencent
+name: Back-end Build app and deploy to Tencent
 on:
   #监听push操作
   push:
@@ -16,9 +16,9 @@ jobs:
       - uses: actions/checkout@v2
       # 步骤名称
       - name: use node
-        uses: actions/setup-node@v2
-          with:
-            node-version: 16 # node版本
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16 # node版本
       - name: npm install
         run: npm install
         working-directory: ./koa

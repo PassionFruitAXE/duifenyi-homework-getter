@@ -1,4 +1,4 @@
-name: Build Front-end app and deploy to Tencent
+name: Front-end Build app and deploy to Tencent
 on:
   #监听push操作
   push:
