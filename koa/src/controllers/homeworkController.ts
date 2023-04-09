@@ -19,13 +19,13 @@ class HomeworkController {
         password,
       }).then(response => response.headers["set-cookie"]?.join(";") || "");
       // 所有作业信息
-      const { data: CourseInfo } = await getStudentCourse(cookie);
-      if (!Array.isArray(CourseInfo)) {
+      const { data: courseInfo } = await getStudentCourse(cookie);
+      if (!Array.isArray(courseInfo)) {
         throw new Error("可能是账号密码不正确");
       }
       // 获取未完成作业信息
       const data = await Promise.all(
-        CourseInfo.map(item =>
+        courseInfo.map(item =>
           getHomeworkList({
             courseid: item.CourseID,
             classid: item.TClassID,
