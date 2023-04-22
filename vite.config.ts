@@ -9,7 +9,7 @@ import type { UserConfigFn, UserConfig } from "vite";
 const defineConfig: UserConfigFn = () => {
   const config: UserConfig = {
     server: {
-      https: false,
+      https: true,
     },
     plugins: [
       react(),
